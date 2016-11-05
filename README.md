@@ -49,7 +49,7 @@ You will see the list of scheduled jobs with all relevant details.
 php artisan schedule:overview --detailed
 ```
 
-This will display a slightly more detailed view of the scheduled tasks, much like the [Indatus/dispatcher](https://github.com/Indatus/dispatcher)-package for Laravel 4.
+The "detailed" option will display a slightly more detailed view of the scheduled tasks.
 
 ![Laravel schedule overview detailed](/images/schedule_overview_detailed.png?raw=true "Laravel schedule overview detailed")
 
