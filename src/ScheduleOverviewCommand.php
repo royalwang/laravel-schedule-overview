@@ -13,14 +13,14 @@ class ScheduleOverviewCommand extends Command
      *
      * @var string
      */
-    protected $signature = 'schedule:overview';
+    protected $signature = 'schedule:overview {--detailed : wheter to use the detailed view or not}';
 
     /**
      * The console command description.
      *
      * @var string
      */
-    protected $description = 'Shows a schedule overview';
+    protected $description = 'Show the scheduled overview';
 
      /**
      * @var Schedule
@@ -45,22 +45,53 @@ class ScheduleOverviewCommand extends Command
      * @return mixed
      */
     public function handle()
-    {   $events = array_map(function ($event) {
-                return [
-                    'cron' => $event->expression,
-                    'command' => static::fixupCommand($event->command),
-                    'previousRun' => CronExpression::factory($event->expression)->getPreviousRunDate()->format('Y-m-d H:i:s'),
-                    'nextRun' => CronExpression::factory($event->expression)->getNextRunDate()->format('Y-m-d H:i:s'),
-                    'timezone' => $event->timezone,
-                    'withoutOverlapping' => $event->withoutOverlapping ? "\xe2\x9c\x85" : "\xe2\x9d\x8c",
-                ];
-            }, $this->schedule->events());
+    {
+        // Check for the argument "detailed"
+        $detailedView = $this->option('detailed');
 
-            $this->table(
-                ['Cron', 'Artisan command', 'Previous Run', 'Next Run', 'Timezone', 'Without overlapping?'],
-                $events
-            );
-           
+        // Map the cron events
+        $events = array_map(function ($event) use ($detailedView) {
+
+            $cron = CronExpression::factory($event->expression);
+
+            // "Default" events
+            $cronEvents = [
+                'cron' => $event->expression,
+                'command' => $this->fixupCommand($event->command),
+                'previousRun' => $cron->getPreviousRunDate()->format('Y-m-d H:i:s'),
+                'nextRun' => $cron->getNextRunDate()->format('Y-m-d H:i:s'),
+                'timezone' => $event->timezone,
+                'withoutOverlapping' => $event->withoutOverlapping ? "\xe2\x9c\x85" : "\xe2\x9d\x8c",
+            ];
+
+            // If detailed view, insert the extra data
+            if ($detailedView) {
+                array_splice($cronEvents, 4, 0, [
+                    'minute' => $cron->getExpression(CronExpression::MINUTE),
+                    'hour' => $cron->getExpression(CronExpression::HOUR),
+                    'dayOfMonth' => $cron->getExpression(CronExpression::DAY),
+                    'month' => $cron->getExpression(CronExpression::MONTH),
+                    'dayOfWeek' => $cron->getExpression(CronExpression::WEEKDAY),
+                ]);
+            }
+
+            return $cronEvents;
+
+        }, $this->schedule->events());
+
+        // Setup table
+        $table = [
+            'Cron', 'Artisan command', 'Previous run', 'Next run', 'Timezone', 'Without overlapping?'
+        ];
+
+        // If detailed view, add the missing columns
+        if ($detailedView) {
+            array_splice($table, 4, 0, [
+                'Minute', 'Hour', 'Day of month', 'Month', 'Day of week',
+            ]);
+        }
+
+        $this->table($table, $events);
     }
 
    /**
@@ -69,7 +100,7 @@ class ScheduleOverviewCommand extends Command
      * @param $command
      * @return string
      */
-    protected static function fixupCommand($command)
+    private function fixupCommand($command)
     {
         $parts = explode(' ', $command);
         if (count($parts) > 2 && $parts[1] === "'artisan'") {

@@ -8,8 +8,7 @@ These instructions allows you to install the package into an existing Laravel ap
 
 ### Prerequisities
 
-Laravel 5 up&running installation.
-
+A Laravel 5 installation up & running.
 
 ### Installation
 
@@ -32,15 +31,27 @@ You must also install this service provider.
 
 ### Usage
 
+#### Default view
+
 Once you have installed the package, you can run the following command:
 
 ```bash
 php artisan schedule:overview
 ```
 
-You will see the list os scheduled jobs with all relevant details.
+You will see the list of scheduled jobs with all relevant details.
 
-![Alt text](/images/schedule_overview.png?raw=true "Laravel schedule overview")
+![Laravel schedule overview](/images/schedule_overview.png?raw=true "Laravel schedule overview")
+
+#### Detailed view
+
+```bash
+php artisan schedule:overview --detailed
+```
+
+This will display a slightly more detailed view of the scheduled tasks, much like the [Indatus/dispatcher](https://github.com/Indatus/dispatcher)-package for Laravel 4.
+
+![Laravel schedule overview detailed](/images/schedule_overview_detailed.png?raw=true "Laravel schedule overview detailed")
 
 All done!
 
