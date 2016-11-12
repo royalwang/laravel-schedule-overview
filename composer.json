@@ -1,6 +1,6 @@
 {
     "name": "michelecurletta/laravel-schedule-overview",
-    "description": "Show an overview of all scheduled commands",
+    "description": "This Laravel package allows you to monitor all scheduled jobs with ease.",
     "homepage": "https://github.com/michelecurletta/laravel-schedule-overview",
     "keywords":
         [
