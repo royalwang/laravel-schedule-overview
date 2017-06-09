@@ -61,7 +61,7 @@ class ScheduleOverviewCommand extends Command
                 'previousRun' => $cron->getPreviousRunDate()->format('Y-m-d H:i:s'),
                 'nextRun' => $cron->getNextRunDate()->format('Y-m-d H:i:s'),
                 'timezone' => $event->timezone,
-                'withoutOverlapping' => $event->withoutOverlapping ? "\xe2\x9c\x85" : "\xe2\x9d\x8c",
+                'withoutOverlapping' => $event->withoutOverlapping ? 'Yes' : 'No',
             ];
 
             // If detailed view, insert the extra data
